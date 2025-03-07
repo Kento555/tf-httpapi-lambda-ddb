@@ -1,6 +1,7 @@
 #!/bin/bash
 
-INVOKE_URL=https://xxxxxxx.amazonaws.com
+# INVOKE_URL=https://m2xaur4tnl.execute-api.us-east-1.amazonaws.com
+INVOKE_URL=$(terraform output -raw invoke_url)
 
 # add movies
 echo "> add movies"
@@ -14,18 +15,18 @@ for i in $(seq 2001 2003); do
     echo
 done
 
-# get movies by year
-echo "> get movies by year"
-for i in $(seq 2001 2003); do
-    curl "$INVOKE_URL/topmovies/$i"
-    echo
-done
+# # get movies by year
+# echo "> get movies by year"
+# for i in $(seq 2001 2003); do
+#     curl "$INVOKE_URL/topmovies/$i"
+#     echo
+# done
 
-# delete movie
-echo "> delete movie from 2002"
-curl -X DELETE "$INVOKE_URL/topmovies/2002"
-echo
+# # delete movie
+# echo "> delete movie from 2002"
+# curl -X DELETE "$INVOKE_URL/topmovies/2002"
+# echo
 
-# get movies
-echo "> get movies"
-curl "$INVOKE_URL/topmovies"
+# # get movies
+# echo "> get movies"
+# curl "$INVOKE_URL/topmovies"

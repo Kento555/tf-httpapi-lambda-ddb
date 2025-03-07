@@ -14,7 +14,10 @@ resource "aws_lambda_function" "http_api_lambda" {
   role             = aws_iam_role.lambda_exec.arn
 
   environment {
-    variables = {} # todo: fill with apporpriate value
+    variables = {
+      DDB_TABLE     = aws_dynamodb_table.table.name
+      SNS_TOPIC_ARN = aws_sns_topic.lambda_notification.arn  # Include SNS topic ARN in Lambda environment variables
+    }
   }
 }
 
@@ -45,7 +48,10 @@ resource "aws_iam_policy" "lambda_exec_role" {
         {
             "Effect": "Allow",
             "Action": [
-                "dynamodb:GetItem"
+                "dynamodb:GetItem",
+                "dynamodb:PutItem",
+                "dynamodb:Scan",
+                "dynamodb:DeleteItem"
             ],
             "Resource": "${aws_dynamodb_table.table.arn}"
         },
@@ -67,3 +73,13 @@ resource "aws_iam_role_policy_attachment" "lambda_policy" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = aws_iam_policy.lambda_exec_role.arn
 }
+
+# # Define the CloudWatch log group for Lambda with retention of 7 days
+# resource "aws_cloudwatch_log_group" "lambda_log_group" {
+#   name              = "/aws/lambda/${aws_lambda_function.http_api_lambda.function_name}"
+#   retention_in_days = 7
+
+#   lifecycle {
+#     ignore_changes = [name]
+#   }
+# }
